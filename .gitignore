@@ -1,0 +1,6 @@
+config/settings.json
+certs/
+reports/
+logs/
+*.pfx
+*.cer

@@ -1,0 +1,9 @@
+{
+  "name": "spo-admin-toolkit",
+  "version": "0.1.0",
+  "description": "Skills, commands, agent và hook để xây dựng bộ công cụ PowerShell (PnP.PowerShell) giúp admin dọn dẹp SharePoint Online: site lớn, file lớn, file trùng, version cũ, file lâu không truy cập.",
+  "author": {
+    "name": "SharepointCleaner"
+  },
+  "keywords": ["sharepoint", "sharepoint-online", "powershell", "pnp", "m365", "storage", "cleanup"]
+}

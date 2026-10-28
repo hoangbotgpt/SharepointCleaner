@@ -1,0 +1,13 @@
+{
+  "name": "spo-local",
+  "owner": {
+    "name": "SharepointCleaner"
+  },
+  "plugins": [
+    {
+      "name": "spo-admin-toolkit",
+      "source": "./plugins/spo-admin-toolkit",
+      "description": "Bộ skill/command/agent hỗ trợ viết công cụ PowerShell quản lý dung lượng SharePoint Online."
+    }
+  ]
+}

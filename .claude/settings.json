@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "spo-local": {
+      "source": {
+        "source": "directory",
+        "path": "./"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "spo-admin-toolkit@spo-local": true
+  }
+}
