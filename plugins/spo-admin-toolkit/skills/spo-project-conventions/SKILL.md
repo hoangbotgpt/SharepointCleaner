@@ -8,7 +8,7 @@ description: Kiến trúc, cấu trúc thư mục, quy ước đặt tên, schem
 ## Môi trường bắt buộc
 - **PowerShell 7.4+** (`pwsh`). PnP.PowerShell 2.x/3.x KHÔNG chạy trên Windows PowerShell 5.1.
 - Module: `PnP.PowerShell` (bắt buộc), `ExchangeOnlineManagement` (chỉ khi dùng audit log cho chức năng "file lâu không truy cập"), `Pester` 5.x, `PSScriptAnalyzer` (dev).
-- Mọi file script bắt đầu bằng `#Requires -Version 7.4` và (với file gọi PnP) `#Requires -Modules PnP.PowerShell`.
+- Script chạy trực tiếp (`scripts/`, `tools/`) bắt đầu bằng `#Requires -Version 7.4`. Module **không** khai báo `RequiredModules`/`#Requires -Modules PnP.PowerShell` (để import và test được nhanh); `Connect-SPCTenant` tự kiểm tra PnP.PowerShell đã cài.
 
 ## Cấu trúc thư mục
 ```
@@ -21,7 +21,7 @@ SharepointCleaner/
 │  │  ├─ Get-SPCLargeSite.ps1            # (1) site > X GB
 │  │  ├─ Get-SPCLargeFile.ps1            # (2) file > X MB trong site
 │  │  ├─ Get-SPCDuplicateFile.ps1        # (3) file trùng tên + dung lượng
-│  │  ├─ Get-SPCFileWithManyVersions.ps1 # (4) file có > N version
+│  │  ├─ Get-SPCFileByVersionCount.ps1 # (4) file có > N version
 │  │  ├─ Remove-SPCOldFileVersion.ps1    # (5) xoá version cũ hơn version chọn
 │  │  ├─ Get-SPCStaleFile.ps1            # (6) file truy cập lần cuối trước ngày X
 │  │  ├─ Remove-SPCStaleFile.ps1         # (7) xoá các file đó
@@ -115,3 +115,5 @@ Và cũng nhận lại từ CSV: `Import-Csv .\reports\stale.csv | Remove-SPCSta
 ## Kiểm tra chất lượng
 - `Invoke-ScriptAnalyzer -Path src -Recurse -Settings PSGallery` không có lỗi Error/Warning.
 - `Invoke-Pester -Path tests` pass. Xem skill **spo-pester-testing**.
+- Chạy gộp cả hai: `pwsh ./tools/Invoke-Checks.ps1` (thêm `-FixEncoding` để tự thêm UTF-8 BOM).
+- Khi đọc thuộc tính có thể chưa load của object CSOM, dùng `Get-SPCPropertyValue` (kiểm tra `PSObject.Properties` trước). Không dùng `try { $obj.Length }`: PowerShell trả `1` cho mọi object đơn lẻ không có `Length`.

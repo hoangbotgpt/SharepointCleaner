@@ -13,7 +13,7 @@ Bộ công cụ PowerShell (module `SPCleaner`, dựa trên PnP.PowerShell) giú
 
 ## Quy tắc làm việc
 - Luôn dùng các skill của plugin `spo-admin-toolkit` (thư mục `plugins/spo-admin-toolkit`): `spo-project-conventions` cho mọi code, cộng thêm skill riêng của từng chức năng.
-- Code chạy trên **PowerShell 7.4+** (`pwsh`). Máy dev hiện chỉ có Windows PowerShell 5.1 → cần cài PowerShell 7 trước khi chạy/test module.
+- Code chạy trên **PowerShell 7.4+** (`pwsh`). Kiểm tra chất lượng bằng `pwsh ./tools/Invoke-Checks.ps1` (BOM + PSScriptAnalyzer + Pester) trước khi coi một thay đổi là xong.
 - Mọi thao tác xoá phải tuân thủ `spo-safe-delete` và được review bằng `/spo-review` trước khi coi là xong.
 - Không bao giờ chạy lệnh xoá thật lên tenant từ Claude; chỉ chạy test với mock hoặc `-WhatIf`.
 - Giao tiếp với admin (menu, thông báo, README) bằng tiếng Việt; code, tên biến, comment bằng tiếng Anh.

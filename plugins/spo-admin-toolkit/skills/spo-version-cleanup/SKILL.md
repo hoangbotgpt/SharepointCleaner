@@ -1,6 +1,6 @@
 ---
 name: spo-version-cleanup
-description: Liệt kê file có số version lớn hơn N và xoá các version cũ hơn version admin chọn (hoặc chỉ giữ lại K version mới nhất) trên SharePoint Online. Dùng khi viết Get-SPCFileWithManyVersions, Remove-SPCOldFileVersion, chức năng 4 và 5 của menu. Triggers - "version", "nhiều phiên bản", "xoá version cũ", "Get-PnPFileVersion", "Remove-PnPFileVersion", "version history", "batch delete version".
+description: Liệt kê file có số version lớn hơn N và xoá các version cũ hơn version admin chọn (hoặc chỉ giữ lại K version mới nhất) trên SharePoint Online. Dùng khi viết Get-SPCFileByVersionCount, Remove-SPCOldFileVersion, chức năng 4 và 5 của menu. Triggers - "version", "nhiều phiên bản", "xoá version cũ", "Get-PnPFileVersion", "Remove-PnPFileVersion", "version history", "batch delete version".
 ---
 
 # Chức năng 4 & 5 – Version
@@ -16,7 +16,7 @@ Tối ưu: tránh gọi `Get-PnPFileVersion` cho từng file.
 - Nếu thư viện **không bật minor version**, số version ≤ số major trong `_UIVersionString` → bỏ qua ngay những file có `[version]$VersionLabel).Major -le $MinVersionCount`.
 - Chỉ những file còn lại mới gọi API lấy version để đếm chính xác.
 ```powershell
-function Get-SPCFileWithManyVersions {
+function Get-SPCFileByVersionCount {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$SiteUrl,
@@ -78,7 +78,8 @@ function Remove-SPCOldFileVersion {
         foreach ($v in $toDelete) {
             if ($PSCmdlet.ShouldProcess("$FileRef v$($v.VersionLabel) ($([math]::Round($v.Size/1MB,2)) MB)", 'Xoá version')) {
                 try {
-                    Remove-PnPFileVersion -Url $FileRef -Identity $v.VersionLabel -Force -Connection $conn -ErrorAction Stop
+                    # -Identity nhận Int32 (ID version) hoặc String; dùng ID cho chắc chắn. -Recycle là BẮT BUỘC.
+                    Remove-PnPFileVersion -Url $FileRef -Identity ([int]$v.ID) -Recycle -Force -Connection $conn -ErrorAction Stop
                     Write-SPCLog -Action DeleteVersion -Target $FileRef -Detail $v.VersionLabel -SizeBytes $v.Size -Result Success
                 } catch {
                     Write-SPCLog -Action DeleteVersion -Target $FileRef -Detail $v.VersionLabel -Result Failed -Message $_.Exception.Message
@@ -88,7 +89,8 @@ function Remove-SPCOldFileVersion {
     }
 }
 ```
-- `Remove-PnPFileVersion` mặc định đưa version vào **Recycle Bin** (khôi phục được). Không dùng tham số xoá vĩnh viễn trừ khi admin bật `-Permanent` rõ ràng – xem skill **spo-safe-delete**.
+- ⚠️ `Remove-PnPFileVersion` (PnP.PowerShell 3.x) **mặc định XOÁ VĨNH VIỄN**; chỉ vào Recycle Bin khi truyền switch `-Recycle`. Luôn truyền `-Recycle`, chỉ bỏ khi admin bật `-Permanent` rõ ràng – xem skill **spo-safe-delete**.
+- Tương tự `Remove-PnPFile` mặc định xoá vĩnh viễn, phải truyền `-Recycle`.
 - Nếu file có retention label/hold, xoá version có thể bị từ chối → log Failed, tiếp tục.
 - Sau khi xoá, dung lượng site (`StorageUsageCurrent`) chỉ giảm khi recycle bin được dọn và sau chu kỳ cập nhật (24–48h). Nói rõ cho admin.
 

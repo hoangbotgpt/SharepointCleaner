@@ -12,7 +12,8 @@ description: Quy tắc an toàn bắt buộc cho mọi thao tác xoá trên Shar
 
 ## 2. Mặc định an toàn
 - Xoá file: `Remove-PnPFile -Recycle` (vào Recycle Bin cấp 1, giữ 93 ngày tổng cộng). Xoá vĩnh viễn chỉ khi `-Permanent` được truyền rõ ràng.
-- Xoá version: `Remove-PnPFileVersion` (vào Recycle Bin). Không dùng `-All`.
+- Xoá version: `Remove-PnPFileVersion -Recycle`. ⚠️ Cả `Remove-PnPFile` và `Remove-PnPFileVersion` **mặc định xoá vĩnh viễn** nếu thiếu `-Recycle` (đã kiểm chứng trên PnP.PowerShell 3.4.1). Không dùng `-All`.
+- Truyền `-Identity` của version bằng ID kiểu `[int]` (FileVersionPipeBind có ctor Int32/String), `-List` bằng `$list.Id` (Guid).
 - **Không bao giờ** gọi `Clear-PnPRecycleBinItem`, `Clear-PnPTenantRecycleBinItem`, `Remove-PnPTenantSite`, `Remove-PnPList` trong project này.
 - Không bao giờ xoá trong `Preservation Hold Library`, thư viện hệ thống, hay site có `LockState` khác `Unlock`.
 - Giới hạn an toàn: `-MaxItems` (mặc định 1000) – vượt quá thì dừng và yêu cầu admin chạy lại với giá trị lớn hơn.

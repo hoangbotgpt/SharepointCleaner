@@ -13,15 +13,14 @@ Install-Module PSScriptAnalyzer -Scope CurrentUser
 Windows có sẵn Pester 3.4 – **không tương thích** cú pháp Pester 5; luôn `Import-Module Pester -MinimumVersion 5.5`.
 
 ## Khung test
+Test cần **PnP.PowerShell đã cài** (không cần kết nối): Pester mock giữ nguyên chữ ký và kiểu tham số của cmdlet thật, nên test bắt được lỗi truyền sai kiểu (ví dụ `-List` phải là Guid/String/List, `-Connection` phải là `PnPConnection` hoặc `$null`).
+- Mock `Get-SPCSiteConnection` trả về `$null` (null hợp lệ cho tham số `-Connection`).
+- Cmdlet Exchange Online (`Search-UnifiedAuditLog`, `Connect-ExchangeOnline`) chỉ tồn tại sau khi kết nối → tạo stub global **có khai báo đủ tham số** trong `tests/TestHelpers.ps1`.
+- Đặt `$script:SPCConfig` bằng `InModuleScope` để vượt qua `Assert-SPCConnected`; trỏ log/report vào `$TestDrive`.
+
 ```powershell
 BeforeAll {
-    # Stub để mock được ngay cả khi máy chưa cài PnP.PowerShell
-    foreach ($c in 'Connect-PnPOnline','Get-PnPTenantSite','Get-PnPList','Get-PnPListItem',
-                   'Get-PnPFileVersion','Remove-PnPFileVersion','Remove-PnPFile','Invoke-PnPGraphMethod',
-                   'Search-UnifiedAuditLog') {
-        if (-not (Get-Command $c -ErrorAction SilentlyContinue)) { New-Item "function:global:$c" -Value { } | Out-Null }
-    }
-    Import-Module "$PSScriptRoot/../src/SPCleaner/SPCleaner.psd1" -Force
+    . "$PSScriptRoot/TestHelpers.ps1"      # import module, stub EXO, Initialize-SPCTestState
 }
 
 Describe 'Get-SPCLargeSite' {

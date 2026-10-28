@@ -1,0 +1,10 @@
+{
+  "TenantName": "contoso",
+  "Tenant": "contoso.onmicrosoft.com",
+  "ClientId": "00000000-0000-0000-0000-000000000000",
+  "AuthMode": "Interactive",
+  "CertificateThumbprint": "",
+  "CertificatePath": "",
+  "ReportFolder": "reports",
+  "LogFolder": "logs"
+}

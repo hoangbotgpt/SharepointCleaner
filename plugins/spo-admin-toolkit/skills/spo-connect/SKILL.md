@@ -38,7 +38,9 @@ App-only với SharePoint **bắt buộc dùng certificate** (client secret khô
   "ClientId": "00000000-0000-0000-0000-000000000000",
   "AuthMode": "Interactive",
   "CertificateThumbprint": "",
-  "DefaultReportFolder": "./reports"
+  "CertificatePath": "",
+  "ReportFolder": "reports",
+  "LogFolder": "logs"
 }
 ```
 `AdminUrl` suy ra: `https://$TenantName-admin.sharepoint.com`.
